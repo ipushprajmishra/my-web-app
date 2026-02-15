@@ -118,6 +118,26 @@ stage('Deploy Container') {
     }
 }
 
+stage('Health Check') {
+    steps {
+        sh '''
+          echo "Waiting for application to start..."
+          sleep 10
+
+          echo "Checking health endpoint..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/WeatherForecast/Health)
+
+          if [ "$STATUS" != "200" ]; then
+            echo "Health check failed with status $STATUS"
+            exit 1
+          fi
+
+          echo "Health check passed"
+        '''
+    }
+}
+
+
 stage('Show Versions') {
     steps {
         sh '''
