@@ -101,7 +101,7 @@ stage('Resolve Deploy Version') {
 stage('Resolve Rollback Version') {
     steps {
         sh '''
-          echo "Last successful build: ${env.LAST_SUCCESSFUL_BUILD_NUMBER}"
+          echo "Last successful build: $LAST_SUCCESSFUL_BUILD_NUMBER"
         '''
     }
 }
