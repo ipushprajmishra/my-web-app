@@ -84,7 +84,8 @@ stage('Tag & Push Image') {
             '''
         }
     }
-}stage('Resolve Deploy Version') {
+}
+stage('Resolve Deploy Version') {
     steps {
         sh '''
           if [ -z "$DEPLOY_VERSION" ]; then
