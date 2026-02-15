@@ -1,6 +1,14 @@
 pipeline {
     agent any
 
+        parameters {
+        string(
+            name: 'DEPLOY_VERSION',
+            defaultValue: '',
+            description: 'Docker image version to deploy (leave empty to deploy current build)'
+        )
+    }
+
     stages {
 
         stage('Checkout Code') {
