@@ -130,7 +130,7 @@ stage('Deploy & Verify') {
                   docker run -d \
                     --name my-web-app \
                     --restart always \
-                    -p 8080:8080 \
+                    -p 8090:8080 \
                     -e APP_VERSION=${EFFECTIVE_VERSION} \
                     ipushprajmishra/my-web-app:${EFFECTIVE_VERSION}
 
@@ -160,7 +160,7 @@ stage('Deploy & Verify') {
                   docker run -d \
                     --name my-web-app \
                     --restart always \
-                    -p 8080:8080 \
+                    -p 8090:8080 \
                     -e APP_VERSION=${LAST_SUCCESSFUL_BUILD_NUMBER} \
                     ipushprajmishra/my-web-app:${LAST_SUCCESSFUL_BUILD_NUMBER}
                 '''
