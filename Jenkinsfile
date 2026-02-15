@@ -95,6 +95,13 @@ stage('Deploy Container') {
             ipushprajmishra/my-web-app:${BUILD_NUMBER}
         '''
     }
+}stage('Show Versions') {
+    steps {
+        sh '''
+          echo "Current build number: ${BUILD_NUMBER}"
+          echo "Last successful build: ${LAST_SUCCESSFUL_BUILD_NUMBER}"
+        '''
+    }
 }
 
     }
