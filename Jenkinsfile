@@ -149,23 +149,23 @@ stage('Deploy & Verify') {
                 '''
             }
             catch (Exception e) {
-                echo "Deployment failed. Rolling back to last successful build: ${LAST_SUCCESSFUL_BUILD_NUMBER}"
+                echo "Deployment failed. Rolling back to last successful build: $ROLLBACK_VERSION"
 
                 sh '''
                   docker stop my-web-app || true
                   docker rm my-web-app || true
 
-                  docker pull ipushprajmishra/my-web-app:${LAST_SUCCESSFUL_BUILD_NUMBER}
+                  docker pull ipushprajmishra/my-web-app:$ROLLBACK_VERSION
 
                   docker run -d \
                     --name my-web-app \
                     --restart always \
                     -p 8090:8080 \
-                    -e APP_VERSION=${LAST_SUCCESSFUL_BUILD_NUMBER} \
-                    ipushprajmishra/my-web-app:${LAST_SUCCESSFUL_BUILD_NUMBER}
+                    -e APP_VERSION=$ROLLBACK_VERSION \
+                    ipushprajmishra/my-web-app:$ROLLBACK_VERSION
                 '''
 
-                error("Deployment failed. Rolled back to ${LAST_SUCCESSFUL_BUILD_NUMBER}")
+                error("Deployment failed. Rolled back to $ROLLBACK_VERSION")
             }
         }
     }
@@ -176,7 +176,7 @@ stage('Show Versions') {
     steps {
         sh '''
           echo "Current build number: ${BUILD_NUMBER}"
-          echo "Last successful build: ${LAST_SUCCESSFUL_BUILD_NUMBER}"
+          echo "Last successful build: $ROLLBACK_VERSION"
         '''
     }
 }
