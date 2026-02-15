@@ -51,5 +51,16 @@ namespace my_web_app.Controllers
 
             return $"AppVersion={version}, Environment={env}, TimeUTC={DateTime.UtcNow}";
         }
+
+
+        [HttpGet]
+        public IActionResult Health()
+        {
+            return Ok(new
+            {
+                status = "healthy",
+                timeUtc = DateTime.UtcNow
+            });
+        }
     }
 }
