@@ -62,5 +62,17 @@ namespace my_web_app.Controllers
                 timeUtc = DateTime.UtcNow
             });
         }
+
+
+        [HttpGet]
+        public IActionResult UnHealth()
+        {
+            throw new NotImplementedException();
+            return Ok(new
+            {
+                status = "healthy",
+                timeUtc = DateTime.UtcNow
+            });
+        }
     }
 }
