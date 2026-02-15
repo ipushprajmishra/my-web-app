@@ -39,7 +39,7 @@ namespace my_web_app.Controllers
         [HttpGet]
         public string GetName(string name)
         {
-            return "your name is " + name;
+            return "your name is old code" + name;
         }
 
         // ✅ NEW: CI/CD version visibility endpoint
