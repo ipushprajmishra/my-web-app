@@ -125,7 +125,7 @@ stage('Health Check') {
           sleep 10
 
           echo "Checking health endpoint..."
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/WeatherForecast/Health)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://lcoalhost:8090/WeatherForecast/Health)
 
           if [ "$STATUS" != "200" ]; then
             echo "Health check failed with status $STATUS"
