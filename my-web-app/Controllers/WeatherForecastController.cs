@@ -1,15 +1,16 @@
-using Amazon.SecretsManager;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace my_web_app.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "Freezing", "Bracing", "Chilly", "Cool",
+            "Mild", "Warm", "Balmy", "Hot",
+            "Sweltering", "Scorching"
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
@@ -19,11 +20,11 @@ namespace my_web_app.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        // Existing endpoint
+        [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-
-            Console.WriteLine(DateTime.UtcNow + "this is pushprah code");
+            Console.WriteLine(DateTime.UtcNow + " this is pushpraj code");
 
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
@@ -34,14 +35,21 @@ namespace my_web_app.Controllers
             .ToArray();
         }
 
-
-        [HttpGet(Name = "GetMyName")]
+        // Existing endpoint
+        [HttpGet]
         public string GetName(string name)
         {
-
             return "your name is " + name;
+        }
 
-       
+        // ✅ NEW: CI/CD version visibility endpoint
+        [HttpGet]
+        public string GetVersion()
+        {
+            var version = Environment.GetEnvironmentVariable("APP_VERSION") ?? "unknown";
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "unknown";
+
+            return $"AppVersion={version}, Environment={env}, TimeUTC={DateTime.UtcNow}";
         }
     }
 }
