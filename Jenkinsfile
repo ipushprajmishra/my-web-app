@@ -8,7 +8,9 @@ pipeline {
             description: 'Docker image version to deploy (leave empty to deploy current build)'
         )
     }
-
+environment {
+    EFFECTIVE_VERSION = "${params.DEPLOY_VERSION?.trim() ? params.DEPLOY_VERSION : BUILD_NUMBER}"
+}
     stages {
 
         stage('Checkout Code') {
@@ -104,14 +106,14 @@ stage('Deploy Container') {
           docker rm my-web-app || true
 
           echo "Pulling image from Docker Hub"
-          docker pull ipushprajmishra/my-web-app:${BUILD_NUMBER}
+          docker pull ipushprajmishra/my-web-app:${EFFECTIVE_VERSION}
 
           echo "Running new container"
           docker run -d \
             --name my-web-app \
             --restart always \
             -p 8090:8080 \
-            ipushprajmishra/my-web-app:${BUILD_NUMBER}
+            ipushprajmishra/my-web-app:${EFFECTIVE_VERSION}
         '''
     }
 }
