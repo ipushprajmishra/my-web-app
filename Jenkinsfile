@@ -105,43 +105,59 @@ stage('Resolve Rollback Version') {
         '''
     }
 }
-
-stage('Deploy Container') {
+stage('Deploy & Verify') {
     steps {
-        sh '''
-          echo "Stopping old container (if exists)"
-          docker stop my-web-app || true
-          docker rm my-web-app || true
+        script {
+            try {
+                sh '''
+                  echo "Deploying version: ${EFFECTIVE_VERSION}"
 
-          echo "Pulling image from Docker Hub"
-          docker pull ipushprajmishra/my-web-app:${EFFECTIVE_VERSION}
+                  docker stop my-web-app || true
+                  docker rm my-web-app || true
 
-          echo "Running new container"
-          docker run -d \
-            --name my-web-app \
-            --restart always \
-            -p 8090:8080 \
-            ipushprajmishra/my-web-app:${EFFECTIVE_VERSION}
-        '''
-    }
-}
+                  docker pull ipushprajmishra/my-web-app:${EFFECTIVE_VERSION}
 
-stage('Health Check') {
-    steps {
-        sh '''
-          echo "Waiting for application to start..."
-          sleep 10
+                  docker run -d \
+                    --name my-web-app \
+                    --restart always \
+                    -p 8080:8080 \
+                    -e APP_VERSION=${EFFECTIVE_VERSION} \
+                    ipushprajmishra/my-web-app:${EFFECTIVE_VERSION}
 
-          echo "Checking health endpoint..."
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8090/WeatherForecast/Health)
+                  echo "Waiting for app startup..."
+                  sleep 10
 
-          if [ "$STATUS" != "200" ]; then
-            echo "Health check failed with status $STATUS"
-            exit 1
-          fi
+                  echo "Running health check..."
+                  STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/WeatherForecast/Health)
 
-          echo "Health check passed"
-        '''
+                  if [ "$STATUS" != "200" ]; then
+                    echo "Health check failed with status $STATUS"
+                    exit 1
+                  fi
+
+                  echo "Health check passed"
+                '''
+            }
+            catch (Exception e) {
+                echo "Deployment failed. Rolling back to last successful build: ${LAST_SUCCESSFUL_BUILD_NUMBER}"
+
+                sh '''
+                  docker stop my-web-app || true
+                  docker rm my-web-app || true
+
+                  docker pull ipushprajmishra/my-web-app:${LAST_SUCCESSFUL_BUILD_NUMBER}
+
+                  docker run -d \
+                    --name my-web-app \
+                    --restart always \
+                    -p 8080:8080 \
+                    -e APP_VERSION=${LAST_SUCCESSFUL_BUILD_NUMBER} \
+                    ipushprajmishra/my-web-app:${LAST_SUCCESSFUL_BUILD_NUMBER}
+                '''
+
+                error("Deployment failed. Rolled back to ${LAST_SUCCESSFUL_BUILD_NUMBER}")
+            }
+        }
     }
 }
 
