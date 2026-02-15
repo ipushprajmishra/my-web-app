@@ -98,13 +98,23 @@ stage('Resolve Deploy Version') {
         '''
     }
 }
-stage('Resolve Rollback Version') {
+
+
+stage('Resolve Versions') {
     steps {
-        sh '''
-          echo "Last successful build: $LAST_SUCCESSFUL_BUILD_NUMBER"
-        '''
+        script {
+            if (currentBuild.previousSuccessfulBuild) {
+                env.ROLLBACK_VERSION = currentBuild.previousSuccessfulBuild.number.toString()
+            } else {
+                env.ROLLBACK_VERSION = ''
+            }
+
+            echo "Deploy version     : ${env.EFFECTIVE_VERSION}"
+            echo "Rollback version   : ${env.ROLLBACK_VERSION ?: 'none'}"
+        }
     }
 }
+
 stage('Deploy & Verify') {
     steps {
         script {
