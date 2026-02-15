@@ -33,5 +33,15 @@ namespace my_web_app.Controllers
             })
             .ToArray();
         }
+
+
+        [HttpGet(Name = "GetMyName")]
+        public string GetName(string name)
+        {
+
+            return "your name is " + name;
+
+       
+        }
     }
 }
