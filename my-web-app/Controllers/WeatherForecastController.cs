@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace my_web_app.Controllers
 {
@@ -54,6 +55,7 @@ namespace my_web_app.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Health()
         {
             return Ok(new
@@ -65,6 +67,7 @@ namespace my_web_app.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult UnHealth()
         {
             throw new NotImplementedException();
