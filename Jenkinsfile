@@ -84,6 +84,16 @@ stage('Tag & Push Image') {
             '''
         }
     }
+}stage('Resolve Deploy Version') {
+    steps {
+        sh '''
+          if [ -z "$DEPLOY_VERSION" ]; then
+            echo "No DEPLOY_VERSION provided. Using current build: ${BUILD_NUMBER}"
+          else
+            echo "DEPLOY_VERSION provided. Deploying version: ${DEPLOY_VERSION}"
+          fi
+        '''
+    }
 }
 stage('Deploy Container') {
     steps {
